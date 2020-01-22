@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vaultsync-operator
+subjects:
+- kind: ServiceAccount
+  name: vaultsync-operator
+roleRef:
+  kind: Role
+  name: vaultsync-operator
+  apiGroup: rbac.authorization.k8s.io

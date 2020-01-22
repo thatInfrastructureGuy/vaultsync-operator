@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultsync-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: vaultsync-operator
+  template:
+    metadata:
+      labels:
+        name: vaultsync-operator
+    spec:
+      serviceAccountName: vaultsync-operator
+      containers:
+        - name: vaultsync-operator
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          command:
+          - vaultsync-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "vaultsync-operator"

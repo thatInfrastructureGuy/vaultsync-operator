@@ -1,0 +1,7 @@
+apiVersion: operator.thatinfrastructureguy.com/v1alpha1
+kind: VaultSyncer
+metadata:
+  name: example-vaultsyncer
+spec:
+  # Add fields here
+  size: 3
