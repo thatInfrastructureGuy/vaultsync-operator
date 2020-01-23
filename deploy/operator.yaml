@@ -16,15 +16,16 @@ spec:
       containers:
         - name: vaultsync-operator
           # Replace this with the built image name
-          image: REPLACE_IMAGE
+          image: thatinfrastructureguy/vaultsync-operator:v0.0.1
           command:
           - vaultsync-operator
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: test15
           env:
             - name: WATCH_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: ""
             - name: POD_NAME
               valueFrom:
                 fieldRef:

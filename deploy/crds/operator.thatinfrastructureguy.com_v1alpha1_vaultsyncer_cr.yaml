@@ -3,5 +3,9 @@ kind: VaultSyncer
 metadata:
   name: example-vaultsyncer
 spec:
-  # Add fields here
-  size: 3
+  consumer: "kubernetes"
+  deploymentList: ""
+  provider: "aws"
+  vaultname: "testingVault"
+  secretname: "my-aws-secret"
+  secretnamespace: "default"
