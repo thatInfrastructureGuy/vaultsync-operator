@@ -86,20 +86,10 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 		return reconcile.Result{}, err
 	}
 
-	env := &data.Env{}
+	deploymentList = instance.Spec.DeploymentList
 
-	env.Provider = instance.Spec.Provider
-	env.VaultName = instance.Spec.VaultName
-	env.ConsumerType = instance.Spec.Consumer
-	env.Namespace = instance.Spec.SecretNamespace
-	env.SecretName = instance.Spec.SecretName
-
-	err, destinationUpdated := vaultsync.Synchronize(env)
-	if err != nil {
-		return reconcile.Result{}, err
-	}
 	reqLogger.Info("DestinationUpdated:", destinationUpdated)
-	return reconcile.Result{RequeueAfter: time.Second * 45}, nil
+	return reconcile.Result{RequeueAfter: time.Second * instance.Spec.RefreshRate}, nil
 }
 
 // newPodForCR returns a busybox pod with the same name/namespace as the cr

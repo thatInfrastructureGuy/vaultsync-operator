@@ -32,40 +32,49 @@ spec:
           description: VaultSyncerSpec defines the desired state of VaultSyncer
           properties:
             consumer:
+              maxLength: 30
+              minLength: 1
               type: string
+            convertHyphensToUnderscores:
+              type: boolean
             deploymentList:
-              type: string
+              items:
+                type: string
+              maxItems: 500
+              minItems: 1
+              type: array
+              uniqueItems: true
             provider:
-              description: 'INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-                Important: Run "operator-sdk generate k8s" to regenerate code after
-                modifying this file Add custom validation using kubebuilder tags:
-                https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html'
+              maxLength: 30
+              minLength: 1
               type: string
-            secretname:
+            refreshRate:
+              type: integer
+            secretName:
+              maxLength: 30
               type: string
-            secretnamespace:
+            secretNamespace:
+              maxLength: 30
+              minLength: 1
               type: string
-            vaultname:
+            vaultName:
+              maxLength: 30
+              minLength: 1
               type: string
           required:
           - consumer
-          - deploymentList
           - provider
-          - secretname
-          - secretnamespace
-          - vaultname
+          - secretNamespace
+          - vaultName
           type: object
         status:
           description: VaultSyncerStatus defines the observed state of VaultSyncer
           properties:
-            string:
-              description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
-                of cluster Important: Run "operator-sdk generate k8s" to regenerate
+            dateUpdated:
+              description: 'Important: Run "operator-sdk generate k8s" to regenerate
                 code after modifying this file Add custom validation using kubebuilder
                 tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html'
               type: string
-          required:
-          - string
           type: object
       type: object
   version: v1alpha1

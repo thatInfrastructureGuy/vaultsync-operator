@@ -6,6 +6,7 @@ spec:
   consumer: "kubernetes"
   deploymentList: ""
   provider: "aws"
-  vaultname: "testingVault"
-  secretname: "my-aws-secret"
-  secretnamespace: "default"
+  vaultName: "testingVault"
+  secretName: "my-aws-secret"
+  secretNamespace: "default"
+  refreshRate: 75
