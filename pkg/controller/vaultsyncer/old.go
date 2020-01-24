@@ -2,26 +2,29 @@ package vaultsyncer
 
 import (
 	"context"
-	"time"
 
 	operatorv1alpha1 "github.com/thatinfrastructureguy/vaultsync-operator/pkg/apis/operator/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-
-	"github.com/thatInfrastructureGuy/VaultSync/pkg/common/data"
-	"github.com/thatInfrastructureGuy/VaultSync/pkg/vaultsync"
 )
 
 var log = logf.Log.WithName("controller_vaultsyncer")
+
+/**
+* USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
+* business logic.  Delete these comments after modifying this file.*
+ */
 
 // Add creates a new VaultSyncer Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
@@ -54,7 +57,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		IsController: true,
 		OwnerType:    &operatorv1alpha1.VaultSyncer{},
 	})
-
 	if err != nil {
 		return err
 	}
@@ -98,9 +100,33 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 		return reconcile.Result{}, err
 	}
 
-	deploymentList := instance.Spec.DeploymentList
+	// Define a new Pod object
+	pod := newPodForCR(instance)
 
-	return reconcile.Result{RequeueAfter: time.Second * instance.Spec.RefreshRate}, nil
+	// Set VaultSyncer instance as the owner and controller
+	if err := controllerutil.SetControllerReference(instance, pod, r.scheme); err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Check if this Pod already exists
+	found := &corev1.Pod{}
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, found)
+	if err != nil && errors.IsNotFound(err) {
+		reqLogger.Info("Creating a new Pod", "Pod.Namespace", pod.Namespace, "Pod.Name", pod.Name)
+		err = r.client.Create(context.TODO(), pod)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+
+		// Pod created successfully - don't requeue
+		return reconcile.Result{}, nil
+	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Pod already exists - don't requeue
+	reqLogger.Info("Skip reconcile: Pod already exists", "Pod.Namespace", found.Namespace, "Pod.Name", found.Name)
+	return reconcile.Result{}, nil
 }
 
 // newPodForCR returns a busybox pod with the same name/namespace as the cr
@@ -117,8 +143,8 @@ func newPodForCR(cr *operatorv1alpha1.VaultSyncer) *corev1.Pod {
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Name:    "vaultsync",
-					Image:   "thatInfrastructureGuy/vaultsync:v0.0.10",
+					Name:    "busybox",
+					Image:   "busybox",
 					Command: []string{"sleep", "3600"},
 				},
 			},
