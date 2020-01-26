@@ -28,6 +28,7 @@ type VaultSyncerSpec struct {
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:UniqueItems=true
 	DeploymentList              []string `json:"deploymentList,omitempty"`
+	StatefulsetList             []string `json:"statefulsetList,omitempty"`
 	RefreshRate                 int      `json:"refreshRate,omitempty"`
 	ConvertHyphensToUnderscores bool     `json:"convertHyphensToUnderscores,omitempty"`
 }

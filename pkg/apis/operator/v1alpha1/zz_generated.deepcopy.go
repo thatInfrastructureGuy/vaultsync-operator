@@ -77,6 +77,11 @@ func (in *VaultSyncerSpec) DeepCopyInto(out *VaultSyncerSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.StatefulsetList != nil {
+		in, out := &in.StatefulsetList, &out.StatefulsetList
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	return
 }
 

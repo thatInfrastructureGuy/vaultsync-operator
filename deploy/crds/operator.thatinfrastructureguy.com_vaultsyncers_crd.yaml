@@ -57,6 +57,10 @@ spec:
               maxLength: 30
               minLength: 1
               type: string
+            statefulsetList:
+              items:
+                type: string
+              type: array
             vaultName:
               maxLength: 30
               minLength: 1
