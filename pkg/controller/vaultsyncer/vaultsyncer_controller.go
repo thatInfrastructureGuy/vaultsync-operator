@@ -96,6 +96,10 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 		return reconcile.Result{}, err
 	}
 
+	if len(instance.Spec.ProviderCredsSecret) == 0 {
+		instance.Spec.ProviderCredsSecret = "providercredentials"
+	}
+
 	// Define a new Pod object
 	podObject := newPodForCR(instance)
 
@@ -142,19 +146,28 @@ func newPodForCR(cr *operatorv1alpha1.VaultSyncer) *corev1.Pod {
 					Name:  "vaultsync",
 					Image: "thatinfrastructureguy/vaultsync:v0.0.11",
 					Env: []corev1.EnvVar{
-						corev1.EnvVar{Name: "Provider", Value: cr.Spec.Provider},
-						corev1.EnvVar{Name: "ProviderCredsSecret", Value: cr.Spec.ProviderCredsSecret},
-						corev1.EnvVar{Name: "VaultName", Value: cr.Spec.VaultName},
-						corev1.EnvVar{Name: "Consumer", Value: cr.Spec.Consumer},
-						corev1.EnvVar{Name: "SecretNamespace", Value: cr.Spec.SecretNamespace},
-						corev1.EnvVar{Name: "SecretName", Value: cr.Spec.SecretName},
-						corev1.EnvVar{Name: "DeploymentList", Value: cr.Spec.DeploymentList},
-						corev1.EnvVar{Name: "StatefulsetList", Value: cr.Spec.StatefulsetList},
-						corev1.EnvVar{Name: "RefreshRate", Value: cr.Spec.RefreshRate},
-						corev1.EnvVar{Name: "ConvertHyphensToUnderscores", Value: cr.Spec.ConvertHyphensToUnderscores},
+						corev1.EnvVar{Name: "PROVIDER", Value: cr.Spec.Provider},
+						corev1.EnvVar{Name: "VAULT_NAME", Value: cr.Spec.VaultName},
+						corev1.EnvVar{Name: "CONSUMER", Value: cr.Spec.Consumer},
+						corev1.EnvVar{Name: "SECRET_NAMESPACE", Value: cr.Spec.SecretNamespace},
+						corev1.EnvVar{Name: "SECRET_NAME", Value: cr.Spec.SecretName},
+						corev1.EnvVar{Name: "DEPLOYMENT_LIST", Value: cr.Spec.DeploymentList},
+						corev1.EnvVar{Name: "STATEFULSET_LIST", Value: cr.Spec.StatefulsetList},
+						corev1.EnvVar{Name: "REFRESH_RATE", Value: cr.Spec.RefreshRate},
+						corev1.EnvVar{Name: "CONVERT_HYPHENS_TO_UNDERSCORES", Value: cr.Spec.ConvertHyphensToUnderscores},
+					},
+					EnvFrom: []corev1.EnvFromSource{
+						{
+							SecretRef: &corev1.SecretEnvSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: cr.Spec.ProviderCredsSecret,
+								},
+							},
+						},
 					},
 				},
 			},
+			ServiceAccountName: "vaultsync-operator",
 		},
 	}
 }

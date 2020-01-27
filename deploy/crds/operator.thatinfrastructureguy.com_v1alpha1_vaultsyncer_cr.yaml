@@ -3,10 +3,13 @@ kind: VaultSyncer
 metadata:
   name: example-vaultsyncer
 spec:
+  provider: "azure"
+  providerCredsSecret: "providercredentials"
+  vaultName: "geb"
   consumer: "kubernetes"
   deploymentList: ""
-  provider: "aws"
-  vaultName: "testingVault"
+  statefulsetList: ""
   secretName: "my-aws-secret"
   secretNamespace: "default"
-  refreshRate: 75
+  refreshRate: "45"
+  convertHyphensToUnderscores: "false"

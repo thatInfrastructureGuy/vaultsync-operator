@@ -20,9 +20,6 @@ spec:
           command:
           - vaultsync-operator
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: test15
           env:
             - name: WATCH_NAMESPACE
               value: ""
