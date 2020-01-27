@@ -36,31 +36,26 @@ spec:
               minLength: 1
               type: string
             convertHyphensToUnderscores:
-              type: boolean
+              type: string
             deploymentList:
-              items:
-                type: string
-              maxItems: 500
-              minItems: 1
-              type: array
-              uniqueItems: true
+              type: string
             provider:
               maxLength: 30
               minLength: 1
               type: string
+            providerCredsSecret:
+              maxLength: 30
+              type: string
             refreshRate:
-              type: integer
+              type: string
             secretName:
               maxLength: 30
               type: string
             secretNamespace:
               maxLength: 30
-              minLength: 1
               type: string
             statefulsetList:
-              items:
-                type: string
-              type: array
+              type: string
             vaultName:
               maxLength: 30
               minLength: 1
@@ -68,6 +63,7 @@ spec:
           required:
           - consumer
           - provider
+          - providerCredsSecret
           - secretNamespace
           - vaultName
           type: object

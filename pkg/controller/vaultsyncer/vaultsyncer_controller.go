@@ -97,19 +97,19 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 	}
 
 	// Define a new Pod object
-	pod := newPodForCR(instance)
+	podObject := newPodForCR(instance)
 
 	// Set VaultSyncer instance as the owner and controller
-	if err := controllerutil.SetControllerReference(instance, pod, r.scheme); err != nil {
+	if err := controllerutil.SetControllerReference(instance, podObject, r.scheme); err != nil {
 		return reconcile.Result{}, err
 	}
 
 	// Check if this Pod already exists
 	found := &corev1.Pod{}
-	err = r.client.Get(context.TODO(), types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, found)
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: podObject.Name, Namespace: podObject.Namespace}, found)
 	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Creating a new Pod", "Pod.Namespace", pod.Namespace, "Pod.Name", pod.Name)
-		err = r.client.Create(context.TODO(), pod)
+		reqLogger.Info("Creating a new Pod", "Pod.Namespace", podObject.Namespace, "Pod.Name", podObject.Name)
+		err = r.client.Create(context.TODO(), podObject)
 		if err != nil {
 			return reconcile.Result{}, err
 		}
@@ -139,9 +139,20 @@ func newPodForCR(cr *operatorv1alpha1.VaultSyncer) *corev1.Pod {
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Name:    "vaultsync",
-					Image:   "thatInfrastructureGuy/vaultsync:v0.0.10",
-					Command: []string{"sleep", "3600"},
+					Name:  "vaultsync",
+					Image: "thatinfrastructureguy/vaultsync:v0.0.11",
+					Env: []corev1.EnvVar{
+						corev1.EnvVar{Name: "Provider", Value: cr.Spec.Provider},
+						corev1.EnvVar{Name: "ProviderCredsSecret", Value: cr.Spec.ProviderCredsSecret},
+						corev1.EnvVar{Name: "VaultName", Value: cr.Spec.VaultName},
+						corev1.EnvVar{Name: "Consumer", Value: cr.Spec.Consumer},
+						corev1.EnvVar{Name: "SecretNamespace", Value: cr.Spec.SecretNamespace},
+						corev1.EnvVar{Name: "SecretName", Value: cr.Spec.SecretName},
+						corev1.EnvVar{Name: "DeploymentList", Value: cr.Spec.DeploymentList},
+						corev1.EnvVar{Name: "StatefulsetList", Value: cr.Spec.StatefulsetList},
+						corev1.EnvVar{Name: "RefreshRate", Value: cr.Spec.RefreshRate},
+						corev1.EnvVar{Name: "ConvertHyphensToUnderscores", Value: cr.Spec.ConvertHyphensToUnderscores},
+					},
 				},
 			},
 		},

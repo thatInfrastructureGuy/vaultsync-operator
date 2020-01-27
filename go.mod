@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/operator-framework/operator-sdk v0.14.1-0.20200122014453-c6848c7b2773
 	github.com/spf13/pflag v1.0.5
-	github.com/thatInfrastructureGuy/VaultSync v0.0.9
+	github.com/thatInfrastructureGuy/VaultSync v0.0.9 // indirect
 	k8s.io/api v0.17.0
 	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v12.0.0+incompatible

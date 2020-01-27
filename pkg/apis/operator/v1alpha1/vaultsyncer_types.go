@@ -13,24 +13,22 @@ type VaultSyncerSpec struct {
 	// +kubebuilder:validation:MinLength=1
 	Provider string `json:"provider"`
 	// +kubebuilder:validation:MaxLength=30
+	ProviderCredsSecret string `json:"providerCredsSecret"`
+	// +kubebuilder:validation:MaxLength=30
 	// +kubebuilder:validation:MinLength=1
 	VaultName string `json:"vaultName"`
 	// +kubebuilder:validation:MaxLength=30
 	// +kubebuilder:validation:MinLength=1
 	Consumer string `json:"consumer"`
 	// +kubebuilder:validation:MaxLength=30
-	// +kubebuilder:validation:MinLength=1
 	SecretNamespace string `json:"secretNamespace"`
 	// +kubebuilder:validation:MaxLength=30
 	SecretName string `json:"secretName,omitempty"`
 
-	// +kubebuilder:validation:MaxItems=500
-	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:UniqueItems=true
-	DeploymentList              []string `json:"deploymentList,omitempty"`
-	StatefulsetList             []string `json:"statefulsetList,omitempty"`
-	RefreshRate                 int      `json:"refreshRate,omitempty"`
-	ConvertHyphensToUnderscores bool     `json:"convertHyphensToUnderscores,omitempty"`
+	DeploymentList              string `json:"deploymentList,omitempty"`
+	StatefulsetList             string `json:"statefulsetList,omitempty"`
+	RefreshRate                 string `json:"refreshRate,omitempty"`
+	ConvertHyphensToUnderscores string `json:"convertHyphensToUnderscores,omitempty"`
 }
 
 // VaultSyncerStatus defines the observed state of VaultSyncer
