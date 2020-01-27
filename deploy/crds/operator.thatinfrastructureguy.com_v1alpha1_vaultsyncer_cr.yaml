@@ -1,7 +1,8 @@
 apiVersion: operator.thatinfrastructureguy.com/v1alpha1
 kind: VaultSyncer
 metadata:
-  name: example-vaultsyncer
+  name: azure-geb
+  namespace: vaultsyncer
 spec:
   provider: "azure"
   providerCredsSecret: "providercredentials"

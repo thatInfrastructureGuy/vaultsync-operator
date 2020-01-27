@@ -5,7 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: vaultsync-operator
-  namespace: default
+  namespace: vaultsyncer
 roleRef:
   kind: ClusterRole
   name: vaultsync-operator
