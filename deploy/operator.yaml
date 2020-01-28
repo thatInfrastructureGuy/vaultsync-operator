@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vaultsync-operator
+  namespace: vaultsync
 spec:
   replicas: 1
   selector:
@@ -15,14 +16,10 @@ spec:
       serviceAccountName: vaultsync-operator
       containers:
         - name: vaultsync-operator
-          # Replace this with the built image name
           image: thatinfrastructureguy/vaultsync-operator:v0.0.1
           command:
           - vaultsync-operator
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: test15
           env:
             - name: WATCH_NAMESPACE
               value: ""

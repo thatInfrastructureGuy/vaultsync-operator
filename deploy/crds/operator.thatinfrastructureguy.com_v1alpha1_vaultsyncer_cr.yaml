@@ -1,12 +1,9 @@
 apiVersion: operator.thatinfrastructureguy.com/v1alpha1
 kind: VaultSyncer
 metadata:
-  name: example-vaultsyncer
+  name: azure-vaultsyncer
+  namespace: vaultsync
 spec:
-  consumer: "kubernetes"
-  deploymentList: ""
-  provider: "aws"
-  vaultName: "testingVault"
-  secretName: "my-aws-secret"
-  secretNamespace: "default"
-  refreshRate: 75
+  provider: "azure"
+  providerCredsSecret: "provider-credentials"
+  vaultName: "myKeyVault"

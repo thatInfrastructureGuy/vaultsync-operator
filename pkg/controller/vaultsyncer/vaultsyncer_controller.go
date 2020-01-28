@@ -2,23 +2,21 @@ package vaultsyncer
 
 import (
 	"context"
-	"time"
 
 	operatorv1alpha1 "github.com/thatinfrastructureguy/vaultsync-operator/pkg/apis/operator/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-
-	"github.com/thatInfrastructureGuy/VaultSync/pkg/common/data"
-	"github.com/thatInfrastructureGuy/VaultSync/pkg/vaultsync"
 )
 
 var log = logf.Log.WithName("controller_vaultsyncer")
@@ -47,6 +45,18 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	if err != nil {
 		return err
 	}
+
+	// TODO(user): Modify this to be the types you create that are owned by the primary resource
+	// Watch for changes to secondary resource Pods and requeue the owner VaultSyncer
+	err = c.Watch(&source.Kind{Type: &corev1.Pod{}}, &handler.EnqueueRequestForOwner{
+		IsController: true,
+		OwnerType:    &operatorv1alpha1.VaultSyncer{},
+	})
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -86,10 +96,37 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 		return reconcile.Result{}, err
 	}
 
-	deploymentList = instance.Spec.DeploymentList
+	if len(instance.Spec.ProviderCredsSecret) == 0 {
+		instance.Spec.ProviderCredsSecret = "provider-credentials"
+	}
 
-	reqLogger.Info("DestinationUpdated:", destinationUpdated)
-	return reconcile.Result{RequeueAfter: time.Second * instance.Spec.RefreshRate}, nil
+	// Define a new Pod object
+	podObject := newPodForCR(instance)
+
+	// Set VaultSyncer instance as the owner and controller
+	if err := controllerutil.SetControllerReference(instance, podObject, r.scheme); err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Check if this Pod already exists
+	found := &corev1.Pod{}
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: podObject.Name, Namespace: podObject.Namespace}, found)
+	if err != nil && errors.IsNotFound(err) {
+		reqLogger.Info("Creating a new Pod", "Pod.Namespace", podObject.Namespace, "Pod.Name", podObject.Name)
+		err = r.client.Create(context.TODO(), podObject)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+
+		// Pod created successfully - don't requeue
+		return reconcile.Result{}, nil
+	} else if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	// Pod already exists - don't requeue
+	reqLogger.Info("Skip reconcile: Pod already exists", "Pod.Namespace", found.Namespace, "Pod.Name", found.Name)
+	return reconcile.Result{}, nil
 }
 
 // newPodForCR returns a busybox pod with the same name/namespace as the cr
@@ -106,11 +143,31 @@ func newPodForCR(cr *operatorv1alpha1.VaultSyncer) *corev1.Pod {
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Name:    "busybox",
-					Image:   "busybox",
-					Command: []string{"sleep", "3600"},
+					Name:  "vaultsync",
+					Image: "thatinfrastructureguy/vaultsync:v0.0.13",
+					Env: []corev1.EnvVar{
+						corev1.EnvVar{Name: "PROVIDER", Value: cr.Spec.Provider},
+						corev1.EnvVar{Name: "VAULT_NAME", Value: cr.Spec.VaultName},
+						corev1.EnvVar{Name: "CONSUMER", Value: cr.Spec.Consumer},
+						corev1.EnvVar{Name: "SECRET_NAMESPACE", Value: cr.Spec.SecretNamespace},
+						corev1.EnvVar{Name: "SECRET_NAME", Value: cr.Spec.SecretName},
+						corev1.EnvVar{Name: "DEPLOYMENT_LIST", Value: cr.Spec.DeploymentList},
+						corev1.EnvVar{Name: "STATEFULSET_LIST", Value: cr.Spec.StatefulsetList},
+						corev1.EnvVar{Name: "REFRESH_RATE", Value: cr.Spec.RefreshRate},
+						corev1.EnvVar{Name: "CONVERT_HYPHENS_TO_UNDERSCORES", Value: cr.Spec.ConvertHyphensToUnderscores},
+					},
+					EnvFrom: []corev1.EnvFromSource{
+						{
+							SecretRef: &corev1.SecretEnvSource{
+								LocalObjectReference: corev1.LocalObjectReference{
+									Name: cr.Spec.ProviderCredsSecret,
+								},
+							},
+						},
+					},
 				},
 			},
+			ServiceAccountName: "vaultsync-operator",
 		},
 	}
 }
