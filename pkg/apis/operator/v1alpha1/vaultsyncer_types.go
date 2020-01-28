@@ -18,10 +18,9 @@ type VaultSyncerSpec struct {
 	// +kubebuilder:validation:MinLength=1
 	VaultName string `json:"vaultName"`
 	// +kubebuilder:validation:MaxLength=30
-	// +kubebuilder:validation:MinLength=1
-	Consumer string `json:"consumer"`
+	Consumer string `json:"consumer,omitempty"`
 	// +kubebuilder:validation:MaxLength=30
-	SecretNamespace string `json:"secretNamespace"`
+	SecretNamespace string `json:"secretNamespace,omitempty"`
 	// +kubebuilder:validation:MaxLength=30
 	SecretName string `json:"secretName,omitempty"`
 

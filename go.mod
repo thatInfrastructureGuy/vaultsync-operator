@@ -3,12 +3,15 @@ module github.com/thatinfrastructureguy/vaultsync-operator
 go 1.13
 
 require (
+	github.com/Azure/go-autorest/autorest v0.9.3 // indirect
+	github.com/Azure/go-autorest/autorest/adal v0.8.1 // indirect
 	github.com/operator-framework/operator-sdk v0.14.1-0.20200122014453-c6848c7b2773
 	github.com/spf13/pflag v1.0.5
-	github.com/thatInfrastructureGuy/VaultSync v0.0.9 // indirect
+	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6 // indirect
 	k8s.io/api v0.17.0
 	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v12.0.0+incompatible
+	k8s.io/utils v0.0.0-20191218082557-f07c713de883 // indirect
 	sigs.k8s.io/controller-runtime v0.4.0
 )
 

@@ -144,7 +144,7 @@ func newPodForCR(cr *operatorv1alpha1.VaultSyncer) *corev1.Pod {
 			Containers: []corev1.Container{
 				{
 					Name:  "vaultsync",
-					Image: "thatinfrastructureguy/vaultsync:v0.0.12",
+					Image: "thatinfrastructureguy/vaultsync:v0.0.13",
 					Env: []corev1.EnvVar{
 						corev1.EnvVar{Name: "PROVIDER", Value: cr.Spec.Provider},
 						corev1.EnvVar{Name: "VAULT_NAME", Value: cr.Spec.VaultName},

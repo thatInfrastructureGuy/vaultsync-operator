@@ -1,16 +1,9 @@
 apiVersion: operator.thatinfrastructureguy.com/v1alpha1
 kind: VaultSyncer
 metadata:
-  name: azure-geb
+  name: azure-vaultsyncer
   namespace: vaultsync
 spec:
   provider: "azure"
-  providerCredsSecret: "my-provider"
-  vaultName: "geb"
-  consumer: "kubernetes"
-  deploymentList: ""
-  statefulsetList: ""
-  secretName: "my-aws-secret"
-  secretNamespace: "default"
-  refreshRate: "45"
-  convertHyphensToUnderscores: "true"
+  providerCredsSecret: "provider-credentials"
+  vaultName: "myKeyVault"
