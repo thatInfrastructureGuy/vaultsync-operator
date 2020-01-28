@@ -1,6 +1,6 @@
 # VaultSync Operator
 
-##### Quick Start
+### Quick Start
 
 1. Deploy the Operator
 
