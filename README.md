@@ -19,14 +19,14 @@ kubectl apply -f deploy/operator.yaml
 
 ```
 ### AZURE KEYVAULT
-kubectl -n vaultsync create secret generic provider-credentials \
+kubectl -n vaultsync create secret generic azure-credentials \
 --from-literal AZURE_TENANT_ID=xxxxxxxxxxxxxx \
 --from-literal AZURE_CLIENT_ID=xxxxxxxxxxxxxx \
 --from-literal AZURE_CLIENT_SECRET=xxxxxxxxxxxxxx \
 --dry-run -o yaml | kubectl -n vaultsync apply -f -
 
 ### AWS SECRETS MANAGER
-kubectl -n vaultsync create secret generic provider-credentials \
+kubectl -n vaultsync create secret generic aws-credentials \
 --from-literal AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxx \
 --from-literal AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxx \
 --from-literal AWS_DEFAULT_REGION=xxxxxxxxxxxxxxxxxxx \
@@ -44,7 +44,7 @@ metadata:
   namespace: vaultsync
 spec:
   provider: "azure"
-  providerCredsSecret: "provider-credentials"
+  providerCredsSecret: "azure-credentials"
   vaultName: "myKeyVault"
 ```
 
