@@ -10,8 +10,8 @@ This project aims to simplify secret management. The idea is:
 ### Currently Supported Providers:
 - [x] AWS Secrets Manager
 - [x] Azure KeyVault Secrets
-- [ ] Google Secrets Manager  : Waiting for Stable APIs
-- [ ] Hashicorp Vault  : Non-requirement for initial release.
+- [ ] Google Secrets Manager
+- [ ] Hashicorp Vault 
 
 ### Currently Supported Consumers:
 - [x] Kubernetes Secrets
