@@ -35,7 +35,7 @@ kubectl apply -f deploy/operator.yaml
 > **Note**: Make sure your credentials have proper authorization to access azure keyvault / aws secrets manager.
 
 
-#### AZURE KEYVAULT
+_Azure:_
 ```
 kubectl -n vaultsync create secret generic azure-credentials \
 --from-literal AZURE_TENANT_ID=xxxxxxxxxxxxxx \
@@ -44,7 +44,7 @@ kubectl -n vaultsync create secret generic azure-credentials \
 --dry-run -o yaml | kubectl -n vaultsync apply -f -
 ```
 
-#### AWS SECRETS MANAGER
+_AWS:_
 ```
 kubectl -n vaultsync create secret generic aws-credentials \
 --from-literal AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxx \
@@ -56,7 +56,7 @@ kubectl -n vaultsync create secret generic aws-credentials \
 
 3. Create the Custom Resource
 
-Azure: 
+_Azure:_ 
 ```
 apiVersion: operator.thatinfrastructureguy.com/v1alpha1
 kind: VaultSyncer
@@ -70,7 +70,7 @@ spec:
   deploymentList: ""
 ```
 
-AWS: 
+_AWS:_ 
 ```
 apiVersion: operator.thatinfrastructureguy.com/v1alpha1
 kind: VaultSyncer
