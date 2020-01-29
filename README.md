@@ -1,4 +1,20 @@
 # VaultSync Operator
+Periodically syncs secrets from various Vaults to Kubernetes Secrets. 
+
+### Description
+This project aims to simplify secret management. The idea is:
+1. Store secrets in any of the industry standard vaults such as `Azure KeyVault`, `AWS Secrets Manager`, `GCP Secrets Manager` or `Hashicorp Vault`. 
+2. These vaults are your _source of truth_.
+3. Whenever secrets change in Vaults your application gets updated automatically with the newer values.
+
+### Currently Supported Providers:
+- [x] AWS Secrets Manager
+- [x] Azure KeyVault Secrets
+- [ ] Google Secrets Manager  : Waiting for Stable APIs
+- [ ] Hashicorp Vault  : Non-requirement for initial release.
+
+### Currently Supported Consumers:
+- [x] Kubernetes Secrets
 
 ### Quick Start
 
