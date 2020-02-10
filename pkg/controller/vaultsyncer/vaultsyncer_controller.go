@@ -104,12 +104,25 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 		instance.Spec.Image = "thatinfrastructureguy/vaultsync:v0.0.14"
 	}
 
+	if len(instance.Spec.SecretName) == 0 {
+		instance.Spec.SecretName = instance.Spec.VaultName
+	}
+
+	if len(instance.Spec.SecretNamespace) == 0 {
+		instance.Spec.SecretNamespace = "default"
+	}
+
 	// Define a new Pod object
 	podObject := newPodForCR(instance)
 
-	instance.Status.Pod = podObject.Name
-	instance.Status.PodNamespace = podObject.Namespace
-	instance.Status.Image = instance.Spec.Image
+	// Update VaultSync Status
+	instance.Status.SecretName = instance.Spec.SecretName
+	instance.Status.SecretNamespace = instance.Spec.SecretNamespace
+	err = r.client.Status().Update(context.TODO(), instance)
+	if err != nil {
+		reqLogger.Error(err, "Failed to update VaultSyncer status")
+		return reconcile.Result{}, err
+	}
 
 	// Set VaultSyncer instance as the owner and controller
 	if err := controllerutil.SetControllerReference(instance, podObject, r.scheme); err != nil {

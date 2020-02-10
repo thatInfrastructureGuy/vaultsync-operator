@@ -35,9 +35,8 @@ type VaultSyncerSpec struct {
 type VaultSyncerStatus struct {
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	Pod          string `json:"pod,omitempty"`
-	PodNamespace string `json:"podNamespace,omitempty"`
-	Image        string `json:"image,omitempty"`
+	SecretName      string `json:"secretName,omitempty"`
+	SecretNamespace string `json:"secretNamespace,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
