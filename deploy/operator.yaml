@@ -16,7 +16,7 @@ spec:
       serviceAccountName: vaultsync-operator
       containers:
         - name: vaultsync-operator
-          image: thatinfrastructureguy/vaultsync-operator:v0.0.1
+          image: thatinfrastructureguy/vaultsync-operator:v0.0.2
           command:
           - vaultsync-operator
           imagePullPolicy: Always
