@@ -100,8 +100,16 @@ func (r *ReconcileVaultSyncer) Reconcile(request reconcile.Request) (reconcile.R
 		instance.Spec.ProviderCredsSecret = "provider-credentials"
 	}
 
+	if len(instance.Spec.Image) == 0 {
+		instance.Spec.Image = "thatinfrastructureguy/vaultsync:v0.0.14"
+	}
+
 	// Define a new Pod object
 	podObject := newPodForCR(instance)
+
+	instance.Status.Pod = podObject.Name
+	instance.Status.PodNamespace = podObject.Namespace
+	instance.Status.Image = instance.Spec.Image
 
 	// Set VaultSyncer instance as the owner and controller
 	if err := controllerutil.SetControllerReference(instance, podObject, r.scheme); err != nil {
@@ -144,7 +152,7 @@ func newPodForCR(cr *operatorv1alpha1.VaultSyncer) *corev1.Pod {
 			Containers: []corev1.Container{
 				{
 					Name:  "vaultsync",
-					Image: "thatinfrastructureguy/vaultsync:v0.0.13",
+					Image: cr.Spec.Image,
 					Env: []corev1.EnvVar{
 						corev1.EnvVar{Name: "PROVIDER", Value: cr.Spec.Provider},
 						corev1.EnvVar{Name: "VAULT_NAME", Value: cr.Spec.VaultName},

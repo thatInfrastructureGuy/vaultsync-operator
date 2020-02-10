@@ -8,6 +8,7 @@ import (
 type VaultSyncerSpec struct {
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+	Image string `json:"image,omitempty"`
 
 	// +kubebuilder:validation:MaxLength=30
 	// +kubebuilder:validation:MinLength=1
@@ -34,7 +35,9 @@ type VaultSyncerSpec struct {
 type VaultSyncerStatus struct {
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	dateUpdated string `json:"dateUpdated,omitempty"`
+	Pod          string `json:"pod,omitempty"`
+	PodNamespace string `json:"podNamespace,omitempty"`
+	Image        string `json:"image,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
