@@ -18,7 +18,7 @@ This project aims to simplify secret management. The idea is:
 
 ### Quick Start
 
-1. Deploy the Operator
+#### 1. Deploy the Operator
 
 ```
 kubectl apply -f deploy/namespace.yaml
@@ -30,7 +30,7 @@ kubectl apply -f deploy/crds/operator.thatinfrastructureguy.com_vaultsyncers_crd
 kubectl apply -f deploy/operator.yaml
 ```
 
-2. Set Your Cloud Credentials
+#### 2. Set Your Cloud Credentials
 
 > **Note**: Make sure your credentials have proper authorization to access azure keyvault / aws secrets manager.
 
@@ -54,7 +54,7 @@ kubectl -n vaultsync create secret generic aws-credentials \
 --dry-run -o yaml | kubectl -n vaultsync apply -f -
 ```
 
-3. Create the Custom Resource
+#### 3. Create the Custom Resource
 
 _Azure:_ 
 ```
@@ -84,7 +84,7 @@ spec:
   deploymentList: ""
 ```
 
-### Custom Resource Values
+#### Custom Resource Values
 
 Parameter | Description | Default
 --- | --- | ---
